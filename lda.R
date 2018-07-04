@@ -1,15 +1,15 @@
 # lda.R
 source('config.R')
-
+source('sample.R')
 # This will serve as an api for LDA
 #* @get /lda
-get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "dataframe", ...){
+get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "dataframe", k=5, maxout_terms=10){
   
   # type: database, dataframe
   # text_column: only useful for dataframe
   # tablename: table name in the db
   # fieldname: fieldname of the text data from the selected table and db
-  
+	print(text_data)  
   ################
   ### Get data ###
   ################
@@ -17,14 +17,14 @@ get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "d
     text <- as.character(unlist(text_data))
     print("Loaded the file successfully")
   }else{
-    # lis <- dbListTables(sql_con)
-    # 
-    # text <- NULL
-    # 
-    # for (i in 1:length(lis)){
-    #   query <- dbSendQuery(sql_con, paste("SELECT description FROM", lis[i]))
+   # lis <- dbListTables(sql_con)
+    
+   # text <- NULL
+     
+    #for (i in 1:length(lis)){
+     #  query <- dbSendQuery(sql_con, paste("SELECT description FROM", lis[i ]))
     #   text <- rbind(text, dbFetch(query, n=-1))
-    #   }
+   #    }
   }
   
   ####################################
@@ -37,7 +37,8 @@ get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "d
   f <- sub_holder(ngrams, text)
   dtm <- as.DocumentTermMatrix(f$output)
   colnames(dtm) <- f$unhold(colnames(dtm))
-  print('Done creating DocumentTermMatrix')
+	print(colnames(dtm))  
+print('Done creating DocumentTermMatrix')
   
   #convert rownames to filenames
   # rownames(dtm) <- df$full_text
@@ -79,7 +80,7 @@ get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "d
   # write.csv(ldaOut.topics,file=paste(“LDAGibbs”,k,”DocsToTopics.csv”))
   
   #top 6 terms in each topic
-  ldaOut.terms <- as.matrix(terms(ldaOut,5))
+  ldaOut.terms <- as.matrix(terms(ldaOut,maxout_terms))
   ldaOut.terms
   #probabilities associated with each topic assignment
   # topicProbabilities <- as.data.frame(ldaOut@gamma)
