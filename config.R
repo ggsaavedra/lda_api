@@ -7,7 +7,7 @@ library(SnowballC)
 library(topicmodels)
 library(mongolite)
 library(qdap)
-
+library(ngram)
 
 # mysql config
 
@@ -36,6 +36,7 @@ mongo_con <- mongo(collection = MONGO_COLLEC,
 
 mong_out <- mongo_con$find()
 ngrams <- tolower(mong_out$text)
+ngrams <- ngrams[which(mapply(wordcount, ngrams)>1)]
 
 #Set parameters for Gibbs sampling
 burnin <- 4000
