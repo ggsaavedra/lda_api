@@ -1,12 +1,3 @@
-## the ngrams
-ngrams <- c("turn signal", "back seat", "buckle up")
+# sample json file
 
-## fake data (MWE)
-dat <- data.frame(docs=paste0("doc", 1:5), 
-                  state=c("use your turn signal",
-                          "please buckle up in the back seat",
-                          "buckle up for safety",
-                          "Sit in the back seat",
-                          "here it is"
-                  )
-)
+# ["erwin tulfo is bashing abs-cbn news","ben tulfo and erwin tulfo are brothers","harry roque has an issue with indiana pacers","abs-cbn news talkes about the discrepancy in the department of tourism","people's television network inc. file a case against los angeles lakers"]

@@ -14,17 +14,14 @@ get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "d
   ### Get data ###
   ################
   if (type=="dataframe"){
-    text <- as.character(unlist(text_data))
+    text <- as.character(fromJSON(text_data))
     print("Loaded the file successfully")
   }else{
-   # lis <- dbListTables(sql_con)
-    
-   # text <- NULL
-     
-    #for (i in 1:length(lis)){
-     #  query <- dbSendQuery(sql_con, paste("SELECT description FROM", lis[i ]))
-    #   text <- rbind(text, dbFetch(query, n=-1))
-   #    }
+   lis <- dbListTables(sql_con)
+
+   query <- dbSendQuery(sql_con, paste("SELECT", fieldname, "FROM", tablename))
+   text <- dbFetch(query)
+   
   }
   
   ####################################
@@ -38,7 +35,7 @@ get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "d
   dtm <- as.DocumentTermMatrix(f$output)
   colnames(dtm) <- f$unhold(colnames(dtm))
 	print(colnames(dtm))  
-print('Done creating DocumentTermMatrix')
+  print('Done creating DocumentTermMatrix')
   
   #convert rownames to filenames
   # rownames(dtm) <- df$full_text
