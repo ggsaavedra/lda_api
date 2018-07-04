@@ -8,6 +8,7 @@ library(topicmodels)
 library(mongolite)
 library(qdap)
 library(ngram)
+library(jsonlite)
 
 # mysql config
 

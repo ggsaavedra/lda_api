@@ -3,13 +3,15 @@ source('config.R')
 source('sample.R')
 # This will serve as an api for LDA
 #* @get /lda
-get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "dataframe", k=5, maxout_terms=10){
+get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "dataframe", k=5, maxterms=10){
   
   # type: database, dataframe
   # text_column: only useful for dataframe
   # tablename: table name in the db
   # fieldname: fieldname of the text data from the selected table and db
-	print(text_data)  
+  print(text_data)
+  print(paste(k, "topics"))
+  print(paste(maxterms, "maximum output terms per topic"))  
   ################
   ### Get data ###
   ################
@@ -18,7 +20,10 @@ get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "d
     print("Loaded the file successfully")
   }else{
    lis <- dbListTables(sql_con)
-
+   
+   print(tablename)
+   print(fieldname)
+   print(paste("SELECT", fieldname, "FROM", tablename))
    query <- dbSendQuery(sql_con, paste("SELECT", fieldname, "FROM", tablename))
    text <- dbFetch(query)
    
@@ -34,7 +39,7 @@ get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "d
   f <- sub_holder(ngrams, text)
   dtm <- as.DocumentTermMatrix(f$output)
   colnames(dtm) <- f$unhold(colnames(dtm))
-	print(colnames(dtm))  
+#	print(colnames(dtm))  
   print('Done creating DocumentTermMatrix')
   
   #convert rownames to filenames
@@ -62,22 +67,24 @@ get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "d
   best <- best
   
   #Number of topics
-  k <- k
+  k <- as.numeric(k)
   
   # added code
   raw.sum=apply(dtm,1,FUN=sum)
   dtm <- dtm[raw.sum!=0, ]
   
+print("Running LDA")
   #Run LDA using Gibbs sampling
   ldaOut <-LDA(dtm, k, method='Gibbs', control=list(nstart=nstart, seed = seed, best=best, burnin = burnin, iter = iter, thin=thin))
   
+print("Done LDA Analysis")
   #write out results
   #docs to topics
   # ldaOut.topics <- as.matrix(topics(ldaOut))
   # write.csv(ldaOut.topics,file=paste(“LDAGibbs”,k,”DocsToTopics.csv”))
   
   #top 6 terms in each topic
-  ldaOut.terms <- as.matrix(terms(ldaOut,maxout_terms))
+  ldaOut.terms <- as.matrix(terms(ldaOut,as.numeric(maxterms)))
   ldaOut.terms
   #probabilities associated with each topic assignment
   # topicProbabilities <- as.data.frame(ldaOut@gamma)
