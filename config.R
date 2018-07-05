@@ -9,6 +9,8 @@ library(mongolite)
 library(qdap)
 library(ngram)
 library(jsonlite)
+library(tidytext)
+library(dplyr)
 
 # mysql config
 
