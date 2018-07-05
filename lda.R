@@ -86,7 +86,7 @@ get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "d
   
   top_terms <- out_topics %>%
     group_by(topic) %>%
-    top_n(maxterms, beta) %>%
+    top_n(as.numeric(maxterms), beta) %>%
     ungroup() %>%
     arrange(topic, -beta)
   
