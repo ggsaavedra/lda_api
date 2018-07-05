@@ -73,30 +73,23 @@ get_topics <- function(text_data = "", tablename = "", fieldname = "", type = "d
   raw.sum=apply(dtm,1,FUN=sum)
   dtm <- dtm[raw.sum!=0, ]
   
-print("Running LDA")
+  print("Running LDA")
   #Run LDA using Gibbs sampling
   ldaOut <-LDA(dtm, k, method='Gibbs', control=list(nstart=nstart, seed = seed, best=best, burnin = burnin, iter = iter, thin=thin))
   
-print("Done LDA Analysis")
-  #write out results
-  #docs to topics
-  # ldaOut.topics <- as.matrix(topics(ldaOut))
-  # write.csv(ldaOut.topics,file=paste(“LDAGibbs”,k,”DocsToTopics.csv”))
+  print("Done LDA Analysis")
   
-  #top 6 terms in each topic
-  ldaOut.terms <- as.matrix(terms(ldaOut,as.numeric(maxterms)))
-  ldaOut.terms
-  #probabilities associated with each topic assignment
-  # topicProbabilities <- as.data.frame(ldaOut@gamma)
-  # write.csv(topicProbabilities,file=paste(“LDAGibbs”,k,”TopicProbabilities.csv”))
-  # write.csv(ldaOut.terms,file=paste(“LDAGibbs”,k,”TopicsToTerms.csv”))
+  # Generate the result
+  print('Generating Result')
   
-  # #Find relative importance of top 2 topics
-  # topic1ToTopic2 <- lapply(1:nrow(dtm),function(x)
-  #   sort(topicProbabilities[x,])[k]/sort(topicProbabilities[x,])[k-1])
-  # 
-  # #Find relative importance of second and third most important topics
-  # topic2ToTopic3 <- lapply(1:nrow(dtm),function(x)
-  #   sort(topicProbabilities[x,])[k-1]/sort(topicProbabilities[x,])[k-2])
+  out_topics <- tidy(ldaOut, matrix = "beta")
+  
+  top_terms <- out_topics %>%
+    group_by(topic) %>%
+    top_n(maxterms, beta) %>%
+    ungroup() %>%
+    arrange(topic, -beta)
+  
+  as.data.frame(top_terms)
   
 }
